@@ -86,18 +86,20 @@ local function toggleFly()
     if selectedPlayer and selectedPlayer.Character and selectedPlayer.Character:FindFirstChild("HumanoidRootPart") then
         isFlying = not isFlying
         if isFlying then
-            local hrp = selectedPlayer.Character.HumanoidRootPart
-            local bp = Instance.new("BodyPosition", hrp)
+            local localHRP = LocalPlayer.Character:WaitForChild("HumanoidRootPart")
+            local targetHRP = selectedPlayer.Character.HumanoidRootPart
+            local bp = Instance.new("BodyPosition", targetHRP)
             bp.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
             bp.D = 10
             bp.P = 10000
-            local loop
-            loop = game:GetService("RunService").RenderStepped:Connect(function()
+
+            local connection
+            connection = game:GetService("RunService").RenderStepped:Connect(function()
                 if not isFlying then
                     bp:Destroy()
-                    loop:Disconnect()
+                    connection:Disconnect()
                 else
-                    bp.Position = LocalPlayer.Character.HumanoidRootPart.Position + Vector3.new(0, 5, 0)
+                    bp.Position = localHRP.Position + Vector3.new(0, 5, 0)
                 end
             end)
         end
