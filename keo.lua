@@ -1,115 +1,100 @@
-local Players = game:GetService("Players")
-local LocalPlayer = Players.LocalPlayer
-
-local ScreenGui = Instance.new("ScreenGui")
-local Frame = Instance.new("Frame")
-local nbfly = Instance.new("TextButton")
-local cngch = Instance.new("TextButton")
-local nbdong = Instance.new("TextButton")
-local nblmo = Instance.new("TextButton")
-local dsngch = Instance.new("ScrollingFrame")
-local UIPadding = Instance.new("UIPadding")
-local UIListLayout = Instance.new("UIListLayout")
-
-ScreenGui.Parent = LocalPlayer:WaitForChild("PlayerGui")
-
-Frame.Size = UDim2.new(0, 200, 0, 300)
-Frame.Position = UDim2.new(0.1, 0, 0.1, 0)
-Frame.BackgroundColor3 = Color3.new(0.2, 0.2, 0.2)
-Frame.Parent = ScreenGui
-Frame.Draggable = true
-Frame.Active = true
-
-nbfly.Size = UDim2.new(0.8, 0, 0.1, 0)
-nbfly.Position = UDim2.new(0.1, 0, 0.1, 0)
-nbfly.Text = "FLY"
-nbfly.BackgroundColor3 = Color3.new(0.5, 0.5, 0.5)
-nbfly.TextScaled = true
-nbfly.Parent = Frame
-
-cngch.Size = UDim2.new(0.8, 0, 0.1, 0)
-cngch.Position = UDim2.new(0.1, 0, 0.25, 0)
-cngch.Text = "Chọn"
-cngch.BackgroundColor3 = Color3.new(0.5, 0.5, 0.5)
-cngch.TextScaled = true
-cngch.Parent = Frame
-
-nbdong.Size = UDim2.new(0.2, 0, 0.1, 0)
-nbdong.Position = UDim2.new(0.8, 0, 0, 0)
-nbdong.Text = "X"
-nbdong.BackgroundColor3 = Color3.new(1, 0, 0)
-nbdong.TextScaled = true
-nbdong.Parent = Frame
-
-nblmo.Size = UDim2.new(0.8, 0, 0.1, 0)
-nblmo.Position = UDim2.new(0.1, 0, 0.4, 0)
-nblmo.Text = "Làm mới"
-nblmo.BackgroundColor3 = Color3.new(0.5, 0.5, 0.5)
-nblmo.TextScaled = true
-nblmo.Parent = Frame
-
-dsngch.Size = UDim2.new(0.8, 0, 0.4, 0)
-dsngch.Position = UDim2.new(0.1, 0, 0.55, 0)
-dsngch.BackgroundColor3 = Color3.new(0.3, 0.3, 0.3)
-dsngch.CanvasSize = UDim2.new(0, 0, 1, 0)
-dsngch.ScrollBarThickness = 6
-dsngch.Parent = Frame
-
-UIPadding.PaddingTop = UDim.new(0, 5)
-UIPadding.Parent = dsngch
-
-UIListLayout.Parent = dsngch
-UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
-
+local player = game.Players.LocalPlayer
+local mouse = player:GetMouse()
 local isFlying = false
-local selectedPlayer
+local targetPlayer = nil
+local flySpeed = 50
 
-local function lmdsa()
-    dsngch:ClearAllChildren()
-    for _, p in ipairs(Players:GetPlayers()) do
-        if p ~= LocalPlayer then
-            local Btn = Instance.new("TextButton")
-            Btn.Size = UDim2.new(1, -10, 0, 30)
-            Btn.Text = p.Name
-            Btn.TextScaled = true
-            Btn.BackgroundColor3 = Color3.new(0.4, 0.4, 0.4)
-            Btn.Parent = dsngch
-            Btn.MouseButton1Click:Connect(function()
-                selectedPlayer = p
-                cngch.Text = "Đã chọn: " .. p.Name
-            end)
-        end
+local gui = Instance.new("ScreenGui")
+gui.Parent = player.PlayerGui
+
+local frame = Instance.new("Frame")
+frame.Size = UDim2.new(0.15, 0, 0.3, 0)
+frame.Position = UDim2.new(0.05, 0, 0.25, 0)
+frame.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+frame.Active = true
+frame.Draggable = true
+frame.Parent = gui
+
+local title = Instance.new("TextLabel")
+title.Size = UDim2.new(1, 0, 0.2, 0)
+title.Text = "ds"
+title.TextColor3 = Color3.fromRGB(255, 255, 255)
+title.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+title.Parent = frame
+
+local closeButton = Instance.new("TextButton")
+closeButton.Size = UDim2.new(0.3, 0, 0.2, 0)
+closeButton.Position = UDim2.new(0.7, 0, 0, 0)
+closeButton.Text = "X"
+closeButton.TextColor3 = Color3.fromRGB(255, 0, 0)
+closeButton.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+closeButton.Parent = frame
+closeButton.MouseButton1Click:Connect(function() gui:Destroy() end)
+
+local refreshButton = Instance.new("TextButton")
+refreshButton.Size = UDim2.new(1, 0, 0.2, 0)
+refreshButton.Position = UDim2.new(0, 0, 0.8, 0)
+refreshButton.Text = "lammoi"
+refreshButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+refreshButton.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+refreshButton.Parent = frame
+
+local playerList = Instance.new("ScrollingFrame")
+playerList.Size = UDim2.new(1, 0, 0.6, 0)
+playerList.Position = UDim2.new(0, 0, 0.2, 0)
+playerList.CanvasSize = UDim2.new(0, 0, 5, 0)
+playerList.ScrollBarThickness = 8
+playerList.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+playerList.Parent = frame
+
+local function updateList()
+    playerList:ClearAllChildren()
+    for _, p in ipairs(game.Players:GetPlayers()) do
+        local playerButton = Instance.new("TextButton")
+        playerButton.Size = UDim2.new(1, -10, 0, 30)
+        playerButton.Position = UDim2.new(0, 5, 0, (#playerList:GetChildren() - 1) * 35)
+        playerButton.Text = p.Name
+        playerButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+        playerButton.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
+        playerButton.Parent = playerList
+        playerButton.MouseButton1Click:Connect(function() targetPlayer = p end)
     end
 end
+
+refreshButton.MouseButton1Click:Connect(updateList)
+
+local flyButton = Instance.new("TextButton")
+flyButton.Size = UDim2.new(0.4, 0, 0.1, 0)
+flyButton.Position = UDim2.new(0.3, 0, 0.9, 0)
+flyButton.Text = "Fly"
+flyButton.TextColor3 = Color3.fromRGB(0, 255, 0)
+flyButton.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+flyButton.Parent = frame
 
 local function toggleFly()
-    if selectedPlayer and selectedPlayer.Character and selectedPlayer.Character:FindFirstChild("HumanoidRootPart") then
-        isFlying = not isFlying
-        if isFlying then
-            local localHRP = LocalPlayer.Character:WaitForChild("HumanoidRootPart")
-            local targetHRP = selectedPlayer.Character.HumanoidRootPart
-            local bp = Instance.new("BodyPosition", targetHRP)
-            bp.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
-            bp.D = 10
-            bp.P = 10000
-
-            local connection
-            connection = game:GetService("RunService").RenderStepped:Connect(function()
-                if not isFlying then
-                    bp:Destroy()
-                    connection:Disconnect()
-                else
-                    bp.Position = localHRP.Position + Vector3.new(0, 5, 0)
-                end
-            end)
-        end
+    if isFlying then
+        isFlying = false
+        targetPlayer = nil
+        player.Character.Humanoid.PlatformStand = false
+    else
+        isFlying = true
+        player.Character.Humanoid.PlatformStand = true
+        flyLoop()
     end
 end
 
-nbfly.MouseButton1Click:Connect(toggleFly)
-nbdong.MouseButton1Click:Connect(function()
-    ScreenGui:Destroy()
-end)
-nblmo.MouseButton1Click:Connect(lmdsa)
+flyButton.MouseButton1Click:Connect(toggleFly)
 
-lmdsa()
+local function flyLoop()
+    game:GetService("RunService").RenderStepped:Connect(function()
+        if isFlying and targetPlayer and targetPlayer.Character then
+            local dir = (targetPlayer.Character.PrimaryPart.Position - player.Character.PrimaryPart.Position).unit
+            player.Character.PrimaryPart.Velocity = dir * flySpeed
+            targetPlayer.Character:SetPrimaryPartCFrame(player.Character.PrimaryPart.CFrame * CFrame.new(0, 2, 0))
+        else
+            player.Character.PrimaryPart.Velocity = Vector3.new(0, 0, 0)
+        end
+    end)
+end
+
+updateList()
