@@ -3,33 +3,39 @@ local mouse = plr:GetMouse()
 local fly = false
 local target = nil
 local speed = 50
+
 local gui = Instance.new("ScreenGui")
 gui.Parent = plr.PlayerGui
+
 local frame = Instance.new("Frame")
 frame.Size = UDim2.new(0.3, 0, 0.5, 0)
 frame.Position = UDim2.new(0.05, 0, 0.25, 0)
 frame.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
 frame.Parent = gui
+
 local closeBtn = Instance.new("TextButton")
 closeBtn.Size = UDim2.new(0.1, 0, 0.1, 0)
 closeBtn.Position = UDim2.new(0.9, 0, 0, 0)
-closeBtn.Text = "Đóng"
+closeBtn.Text = "X"
 closeBtn.BackgroundColor3 = Color3.fromRGB(200, 0, 0)
 closeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 closeBtn.Parent = frame
+
 local minimizeBtn = Instance.new("TextButton")
 minimizeBtn.Size = UDim2.new(0.1, 0, 0.1, 0)
 minimizeBtn.Position = UDim2.new(0.8, 0, 0, 0)
-minimizeBtn.Text = "Thu gọn"
+minimizeBtn.Text = "-"
 minimizeBtn.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
 minimizeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 minimizeBtn.Parent = frame
+
 local title = Instance.new("TextLabel")
 title.Size = UDim2.new(1, 0, 0.1, 0)
-title.Text = "Danh sách"
+title.Text = "Danh sách người chơi"
 title.TextColor3 = Color3.fromRGB(255, 255, 255)
 title.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 title.Parent = frame
+
 local refreshBtn = Instance.new("TextButton")
 refreshBtn.Size = UDim2.new(1, 0, 0.1, 0)
 refreshBtn.Position = UDim2.new(0, 0, 0.9, 0)
@@ -37,6 +43,7 @@ refreshBtn.Text = "Làm mới"
 refreshBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 refreshBtn.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
 refreshBtn.Parent = frame
+
 local scroll = Instance.new("ScrollingFrame")
 scroll.Size = UDim2.new(1, 0, 0.7, 0)
 scroll.Position = UDim2.new(0, 0, 0.1, 0)
@@ -44,6 +51,7 @@ scroll.CanvasSize = UDim2.new(0, 0, 5, 0)
 scroll.ScrollBarThickness = 8
 scroll.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
 scroll.Parent = frame
+
 local flyBtn = Instance.new("TextButton")
 flyBtn.Size = UDim2.new(1, 0, 0.1, 0)
 flyBtn.Position = UDim2.new(0, 0, 0.8, 0)
@@ -51,6 +59,7 @@ flyBtn.Text = "Bật/Tắt Bay"
 flyBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 flyBtn.BackgroundColor3 = Color3.fromRGB(70, 130, 180)
 flyBtn.Parent = frame
+
 closeBtn.MouseButton1Click:Connect(function()
     gui.Enabled = false
 end)
@@ -69,6 +78,7 @@ local function updateList()
         pBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
         pBtn.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
         pBtn.Parent = scroll
+
         pBtn.MouseButton1Click:Connect(function()
             target = p
         end)
