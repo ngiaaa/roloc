@@ -1,6 +1,5 @@
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
-local Mouse = LocalPlayer:GetMouse()
 
 local ScreenGui = Instance.new("ScreenGui")
 local Frame = Instance.new("Frame")
@@ -12,7 +11,7 @@ local dsngch = Instance.new("ScrollingFrame")
 local UIPadding = Instance.new("UIPadding")
 local UIListLayout = Instance.new("UIListLayout")
 
-ScreenGui.Parent = game.CoreGui
+ScreenGui.Parent = LocalPlayer:WaitForChild("PlayerGui")
 
 Frame.Size = UDim2.new(0, 200, 0, 300)
 Frame.Position = UDim2.new(0.1, 0, 0.1, 0)
@@ -30,7 +29,7 @@ nbfly.Parent = Frame
 
 cngch.Size = UDim2.new(0.8, 0, 0.1, 0)
 cngch.Position = UDim2.new(0.1, 0, 0.25, 0)
-cngch.Text = "chọn"
+cngch.Text = "Chọn"
 cngch.BackgroundColor3 = Color3.new(0.5, 0.5, 0.5)
 cngch.TextScaled = true
 cngch.Parent = Frame
@@ -44,7 +43,7 @@ nbdong.Parent = Frame
 
 nblmo.Size = UDim2.new(0.8, 0, 0.1, 0)
 nblmo.Position = UDim2.new(0.1, 0, 0.4, 0)
-nblmo.Text = "làm mới"
+nblmo.Text = "Làm mới"
 nblmo.BackgroundColor3 = Color3.new(0.5, 0.5, 0.5)
 nblmo.TextScaled = true
 nblmo.Parent = Frame
@@ -77,12 +76,13 @@ local function lmdsa()
             Btn.Parent = dsngch
             Btn.MouseButton1Click:Connect(function()
                 selectedPlayer = p
+                cngch.Text = "Đã chọn: " .. p.Name
             end)
         end
     end
 end
 
-local function nbfly()
+local function toggleFly()
     if selectedPlayer and selectedPlayer.Character and selectedPlayer.Character:FindFirstChild("HumanoidRootPart") then
         isFlying = not isFlying
         if isFlying then
@@ -104,7 +104,7 @@ local function nbfly()
     end
 end
 
-nbfly.MouseButton1Click:Connect(nbfly)
+nbfly.MouseButton1Click:Connect(toggleFly)
 nbdong.MouseButton1Click:Connect(function()
     ScreenGui:Destroy()
 end)
